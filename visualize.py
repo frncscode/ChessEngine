@@ -20,22 +20,24 @@ images = {
 
 class Visualizer:
 
-    def __init__(self):
-        pass
+    def __init__(self, size):
+        self.size = size
+        self.tile_size = self.size // 8
 
     def swap_colour(self, colour):
-        if colour == (255, 255, 255):
-            colour = (0, 0, 0)
+        if colour == (119, 149, 86):
+            colour = (235, 236, 208)
         else:
-            colour = (255, 255, 255)
+            colour = (119, 149, 86)
         return colour
 
-    def board_to_surface(self, board, size):
+    def board_to_surface(self, board):
         '''
         Takes a 2d array of the board and returns a surface
         to blit onto the main screen
         '''
-        piece_size = size // 8
+
+        piece_size = self.tile_size
         size = piece_size * 8
 
         # creating the board surface
