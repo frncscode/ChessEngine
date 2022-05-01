@@ -24,9 +24,11 @@ class Pawn(Piece):
         move = (self.pos[1] + (1 * self.side), self.pos[0]) # up one
         if not board[move[0]][move[1]] and onBoard(move):
             moves.append(move)
-            move = (move[1] + (1 * self.side), move[0]) # up two
-            if not board[move[0]][move[1]] and onBoard(move):
-                moves.append(move)
+            move = (move[0] + (1 * self.side), move[1]) # up two
+            # double jump rule
+            if not self.moved:
+                if not board[move[0]][move[1]] and onBoard(move):
+                    moves.append(move)
         return moves
 
 

@@ -54,9 +54,9 @@ class Visualizer:
         # putting the pieces onto the board surface
         for row_idx, row in enumerate(board):
             for piece_idx, piece in enumerate(row):
-                if piece != "0":
+                if piece != 0:
                     board_surface.blit(pygame.transform.scale(
-                        images[piece],
+                        images[piece.value],
                         (piece_size, piece_size)),
                         (piece_idx * piece_size, row_idx * piece_size))
 

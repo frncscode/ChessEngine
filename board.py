@@ -14,7 +14,7 @@ class Board:
         ["wr","wk","wb","wq","wK","wb","wk","wr"]
         ]
 
-    def __init__(self, setup = Board.default_board):
+    def __init__(self, setup = default_board):
         ''' Args: setup is a 2d array of pieces
         for the board to begin as. Default chess
         setup if no argument is passed'''
@@ -23,9 +23,15 @@ class Board:
     def classed_to_str(self, classed_board):
         board = []
         for row in classed_board:
+            print(row)
             row = []
             for col in row:
-                row.append(col.value)
+                print(col)
+                if col == 0:
+                    row.append("0")
+                else:
+                    row.append(col.value)
+                    print(col.value)
             board.append(row)
         return board
 
