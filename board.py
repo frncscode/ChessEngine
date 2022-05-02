@@ -1,5 +1,6 @@
 import pygame
-import piece
+import piece 
+from piece import Queen
 import time
 
 class Board:
@@ -104,6 +105,12 @@ class Board:
         # updating the pieces position
         piece.pos = pos
         
+        # checking for promotion
+        if piece.value[1] == 'p':
+            if piece.moved and piece.pos[0] == 7 or piece.pos[0] == 0:
+                # promote the pawn
+                self.board[piece.pos[0]][piece.pos[1]] = Queen(piece.pos, piece.value[0] + 'q')
+
         # updating the moved attribute of piece if its a pawn
         if piece.value[1] == 'p': # pawn
             piece.moved = True
