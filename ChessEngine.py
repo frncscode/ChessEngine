@@ -1,7 +1,8 @@
 import pygame
 import time
-import board
+import board as bd
 import piece
+import random
 import visualize
 import sys
 
@@ -10,14 +11,25 @@ pygame.init()
 win = pygame.display.set_mode((800,800))
 clock = pygame.time.Clock()
 
-# board set up
-board = board.Board() # default board
-visualizer = visualize.Visualizer(800) # board size
-selected = False
+def restart():
+    global board
+    global visualizer
+    global selected
+    # board set up
+    board = bd.Board() # default board
+    visualizer = visualize.Visualizer(800) # board size
+    selected = False
 
+restart()
 while True:
     mouse_pos = pygame.mouse.get_pos()
-    
+    if board.winner:
+        if board.winner > 0:
+            print('BLACK WINS BY CHECKMATE')
+        else:
+            print('WHITE WINS BY CHECKMATE')
+        restart()
+        
     # event loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -49,6 +61,8 @@ while True:
                         # deselect
                         selected = False
             elif event.button == 3:
+                print("Black in check:", board.inCheck(1, board.board))
+                print("White in check:", board.inCheck(-1, board.board))
                 selected = False
     
     # displaying the chess board 

@@ -1,35 +1,7 @@
 import pygame
 import piece
+import time
 
-'''
-def get_pieces(side, board):
-    '' ARGS: side -> 1 or -1
-    -1: white 1: black
-    pieces = []
-    for row in board:
-        for piece in row:
-            if piece:
-                if piece.side == side:
-                    pieces.append(piece)
-    return pieces
-
-def isCheck(side, board=None):
-    ARGS: board -> the board object
-    side -> the side of who to check is in check
-   
-    if not board:
-       board = self.board
-    opposite_side_pieces = get_pieces(side * -1, board)
-    for row in board:
-       for piece in row:
-           if piece:
-               if piece.side == side and piece.value[1] == 'K':
-                   king = piece
-    for piece in opposite_side_pieces:
-       if king.pos in piece.gen_moves(board):
-         return True
-    return False
-'''
 class Board:
     side_conversion = {-1: "WHITE", 1: "BLACK"}
 
@@ -52,6 +24,7 @@ class Board:
         self.white_check = False
         self.black_check = False
         self.turn = -1 # white
+        self.winner = None
 
     def getPieces(self, side, board = None):
         pieces = []
@@ -79,10 +52,51 @@ class Board:
                 return True
         return False
 
+    def checkmate(self, side, board=None):
+        if not board:
+            board = self.board
+        for piece in self.getPieces(side, board):
+            for move in piece.gen_moves(board):
+                # simulate move
+                sim_board = self.copy()
+                sim_board[move[0]][move[1]] = piece
+                sim_board[piece.pos[0]][piece.pos[1]] = 0
+                temp_pos = piece.pos
+                piece.pos = move
+                # check for check
+                if not self.inCheck(side, sim_board):
+                    piece.pos = temp_pos
+                    return False
+                piece.pos = temp_pos
+        return True
+        
+    def update(self):
+        self.black_check = self.inCheck(1)
+        self.white_check = self.inCheck(-1)
+        start = time.perf_counter()
+        if self.checkmate(1):
+            # white wins
+            self.winner = -1
+        elif self.checkmate(-1):
+            # black wins
+            self.winner = 1
+        print('Checking for checkmate took:', str(time.perf_counter() - start) + ' seconds')
 
     def move(self, piece, pos):
         '''ARGS: piece -> piece object to move
         pos -> board index to move to'''
+         
+        b = self.copy()
+        b[pos[0]][pos[1]] = piece
+        b[piece.pos[0]][piece.pos[1]] = 0
+        prev_pos = piece.pos 
+        piece.pos = pos
+        if self.inCheck(piece.side, b):
+            # moved into a check position
+            piece.pos = prev_pos
+            return
+        piece.pos = prev_pos
+        
         # moving the piece to new position
         self.board[pos[0]][pos[1]] = piece
         # making pieces previous position empty
@@ -93,23 +107,25 @@ class Board:
         # updating the moved attribute of piece if its a pawn
         if piece.value[1] == 'p': # pawn
             piece.moved = True
-        
-        # checking for check of the opposite team
-        if self.turn == -1:
-            self.black_check = self.inCheck(self.turn * -1, self.board)
-        elif self.turn == 1:
-            self.white_check = self.inCheck(self.turn * -1, self.board)
-           
-        print('Black in check:', str(self.black_check))
-        print('White in check:', str(self.white_check))
-        
+       
+        # updating
+        self.update()
+
         # swapping the turn
         self.turn *= -1
+
+    def copy(self):
+        board = []
+        for row in self.board:
+            row_ = []
+            for piece in row:
+                row_.append(piece)
+            board.append(row_)
+        return board
 
     def classed_to_str(self, classed_board):
         board = []
         for row in classed_board:
-            print(row)
             row = []
             for col in row:
                 print(col)
