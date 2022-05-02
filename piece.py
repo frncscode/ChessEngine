@@ -1,4 +1,5 @@
 import pygame
+import board as bd
 
 def onBoard(pos):
     '''
@@ -22,13 +23,23 @@ class Pawn(Piece):
     def gen_moves(self, board):
         moves = []
         move = (self.pos[0] + (1 * self.side), self.pos[1]) # one up
-        if not board[move[0]][move[1]] and onBoard(move):
-            moves.append(move)
-            move = (move[0] + (1 * self.side), move[1]) # up two
-            # double jump rule
-            if not self.moved:
-                if not board[move[0]][move[1]] and onBoard(move):
-                    moves.append(move)
+        if onBoard(move):
+            if not board[move[0]][move[1]]:
+                moves.append(move)
+                move = (move[0] + (1 * self.side), move[1]) # up two
+                # double jump rule
+                if not self.moved:
+                    if onBoard(move):
+                        if not board[move[0]][move[1]]:
+                            moves.append(move)
+        # taking
+        for move in [(self.pos[0] + 1 * self.side, self.pos[1] + 1),
+                (self.pos[0] + 1 * self.side, self.pos[1] - 1)]:
+            if onBoard(move):
+                if board[move[0]][move[1]]:
+                    if board[move[0]][move[1]].side == self.side * -1:
+                        moves.append(move)
+
         return moves
 
 
@@ -254,7 +265,7 @@ class Queen(Piece):
                 break
             moves.append((self.pos[0], self.pos[1] + interval * self.side))
             interval -= 1
-
+        
         return moves
 
 
@@ -264,4 +275,22 @@ class King(Piece):
         super().__init__(pos, value)
 
     def gen_moves(self, board):
-        pass
+        moves = []
+
+        for move in [
+            (self.pos[0] + 1, self.pos[1] + 0), # up
+            (self.pos[0] + -1, self.pos[1] + 0), # down
+            (self.pos[0] + 0, self.pos[1] + -1), # left
+            (self.pos[0] + 0, self.pos[1] + 1), # right
+            (self.pos[0] + 1, self.pos[1] + 1), # down and right
+            (self.pos[0] + 1, self.pos[1] + -1), # down and left
+            (self.pos[0] + -1, self.pos[1] + 1), # up and right
+            (self.pos[0] + -1, self.pos[1] + -1) # up and left
+                ]:
+            if onBoard(move):
+                if not board[move[0]][move[1]] or (
+                    board[move[0]][move[1]].side == self.side * -1
+                    ):
+                    moves.append(move)
+                    
+        return moves
