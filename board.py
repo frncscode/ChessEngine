@@ -36,8 +36,13 @@ class Board:
         return board
 
     def print(self):
-        for row in self.value:
-            print(' '.join(row))
+        for row in self.board:
+            for col in row:
+                if not(col):
+                    print("00", end = '')
+                else:
+                    print(col.value, end='')
+            print("")
 
     def str_to_classed(self, value):
         board = []
@@ -49,7 +54,7 @@ class Board:
                     row.append(0)
                 else:
                     piece_type = col[1]
-                    pos = (col_idx, row_idx)
+                    pos = (row_idx, col_idx)
                     if piece_type == "p": # pawn
                         row.append(piece.Pawn(pos, col))
                     elif piece_type == "r": # rook

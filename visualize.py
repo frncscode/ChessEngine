@@ -55,9 +55,12 @@ class Visualizer:
         for row_idx, row in enumerate(board):
             for piece_idx, piece in enumerate(row):
                 if piece != 0:
+                    # visual piece size that fits nicer
+                    visual_piece_size = int(piece_size * 0.7)
                     board_surface.blit(pygame.transform.scale(
                         images[piece.value],
-                        (piece_size, piece_size)),
-                        (piece_idx * piece_size, row_idx * piece_size))
+                        (visual_piece_size, visual_piece_size)),
+                        (piece_idx * piece_size + ((piece_size - visual_piece_size) // 2),
+                            row_idx * piece_size + ((piece_size - visual_piece_size) // 2)))
 
         return board_surface
