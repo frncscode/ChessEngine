@@ -48,15 +48,9 @@ while True:
                 # if a piece is already selected try move
                 elif selected != False: 
                     if selected_index != [selected.pos[0], selected.pos[1]]: # not the same tile as before
-                        moves = selected.gen_moves(board.board)
-                        if selected_index in moves:
-                            # move the piece
-                            board.move(selected, selected_index)
-                            # deselect
-                            selected = False
-                        else:
-                            # deselect
-                            selected = False
+                        board.move(selected, selected_index)
+                        # deselect
+                        selected = False
                     else:
                         # deselect
                         selected = False

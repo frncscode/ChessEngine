@@ -21,26 +21,9 @@ pygame.display.set_caption(caption)
 board = bd.Board()
 visualizer = visualize.Visualizer(600)
 
-def randomMove(turn):
-    # select random piece
-    pieces = []
-    for row in board.board:
-        for piece in row:
-            if piece: # not empty
-                if piece.side == turn:
-                    pieces.append(piece)
-    piece = random.choice(pieces)
-
-    while True:
-        # try get random move
-        possible_moves = piece.gen_moves(board.board)
-        if not possible_moves:
-            # if no possible moves restart
-            pieces.remove(piece)
-            piece = random.choice(pieces)
-            continue 
-        move = random.choice(possible_moves)
-        return piece, move
+def randomMove():
+    moves = board.getValidMoves() 
+    return random.choice(moves)
     
 playing = True
 interval = 1
@@ -71,24 +54,7 @@ while True:
             if event.key == 32 and not playing: # space
                 # restart game
                 restart()
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # moving
-            if False:
-                if playing:
-                    if event.button == 1:
-                        if board.turn == -1:
-                            # white moves
-                            moved = False
-                            while not moved:
-                                piece, move = randomMove(board.turn)
-                                moved = board.move(piece, move)
-                        elif board.turn == 1:
-                            # black moves
-                            moved = False
-                            while not moved:
-                                piece, move = randomMove(board.turn)
-                                moved = board.move(piece, move)
+        
     # QOL
     # moves time out
     if moves >= 500 and playing:
@@ -100,7 +66,7 @@ while True:
         if ticks >= interval:
             moved = False
             while not moved:
-                piece, move = randomMove(board.turn)
+                piece, move = randomMove()
                 piece_pos = piece.pos
                 move_pos = move
                 moved = board.move(piece, move)
