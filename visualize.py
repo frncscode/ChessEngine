@@ -20,7 +20,8 @@ images = {
 
 class Visualizer:
 
-    def __init__(self, size):
+    def __init__(self, size, move_prompts = True):
+        self.move_prompts = move_prompts
         self.size = size
         self.tile_size = self.size // 8
 

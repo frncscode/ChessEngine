@@ -81,7 +81,6 @@ class Board:
         elif self.checkmate(-1):
             # black wins
             self.winner = 1
-        print('Checking for checkmate took:', str(time.perf_counter() - start) + ' seconds')
 
     def move(self, piece, pos):
         '''ARGS: piece -> piece object to move
@@ -95,7 +94,7 @@ class Board:
         if self.inCheck(piece.side, b):
             # moved into a check position
             piece.pos = prev_pos
-            return
+            return False
         piece.pos = prev_pos
         
         # moving the piece to new position
@@ -120,6 +119,9 @@ class Board:
 
         # swapping the turn
         self.turn *= -1
+
+        # successful
+        return True
 
     def copy(self):
         board = []

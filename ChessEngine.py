@@ -17,7 +17,7 @@ def restart():
     global selected
     # board set up
     board = bd.Board() # default board
-    visualizer = visualize.Visualizer(800) # board size
+    visualizer = visualize.Visualizer(800, move_prompts=False) # board size
     selected = False
 
 restart()
@@ -70,35 +70,37 @@ while True:
     bg = visualizer.board_to_surface(board.board)
     win.blit(bg, (0, 0))
     
-    # visual effects
+    if visualizer.move_prompts:
+        # visual effects
+        if selected:
+            # draw circles over possible moves
+            for move in selected.gen_moves(board.board):
+                if board.board[move[0]][move[1]]:
+                    # the move is a take
+                    take = True
+                else:
+                    take = False
+                # creating a temporary surface so that the circle can be transparent
+                move_screen_pos = (move[1] * visualizer.tile_size, move[0] * visualizer.tile_size)
+                circle_surface = pygame.Surface((visualizer.tile_size, visualizer.tile_size), pygame.SRCALPHA)
+                if not take:
+                    # if the move is a take then we draw a circle around it
+                    pygame.draw.circle(circle_surface, (80, 80, 80, 100),
+                            (visualizer.tile_size // 2, 
+                            visualizer.tile_size // 2),
+                            int(visualizer.tile_size * 0.15))
+                else:
+                    # if move is not a take then we draw a small filled circle in it
+                    pygame.draw.circle(circle_surface, (80, 80, 80, 100),
+                            (visualizer.tile_size // 2,
+                            visualizer.tile_size // 2),
+                            int(visualizer.tile_size * 0.4),
+                            width=int(visualizer.tile_size * 0.1))
+
+                # display the details to the screen
+                win.blit(circle_surface, move_screen_pos)
+
     if selected:
-        # draw circles over possible moves
-        for move in selected.gen_moves(board.board):
-            if board.board[move[0]][move[1]]:
-                # the move is a take
-                take = True
-            else:
-                take = False
-            # creating a temporary surface so that the circle can be transparent
-            move_screen_pos = (move[1] * visualizer.tile_size, move[0] * visualizer.tile_size)
-            circle_surface = pygame.Surface((visualizer.tile_size, visualizer.tile_size), pygame.SRCALPHA)
-            if not take:
-                # if the move is a take then we draw a circle around it
-                pygame.draw.circle(circle_surface, (80, 80, 80, 100),
-                        (visualizer.tile_size // 2, 
-                        visualizer.tile_size // 2),
-                        int(visualizer.tile_size * 0.15))
-            else:
-                # if move is not a take then we draw a small filled circle in it
-                pygame.draw.circle(circle_surface, (80, 80, 80, 100),
-                        (visualizer.tile_size // 2,
-                        visualizer.tile_size // 2),
-                        int(visualizer.tile_size * 0.4),
-                        width=int(visualizer.tile_size * 0.1))
-
-            # display the details to the screen
-            win.blit(circle_surface, move_screen_pos)
-
         # draw square around selected tile
         pygame.draw.rect(win, (0, 210, 15),
                 (selected.pos[1] * visualizer.tile_size,
