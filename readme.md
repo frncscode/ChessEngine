@@ -7,3 +7,4 @@
 * Create a visualizer
 * Create pieces and there rules and shii
 * yeah
+* wtf
