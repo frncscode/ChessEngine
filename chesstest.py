@@ -19,6 +19,7 @@ pygame.display.set_caption(caption)
 
 # chess engine setup
 board = bd.Board()
+print(board.board)
 visualizer = visualize.Visualizer(600)
 
 def randomMove():
@@ -54,7 +55,9 @@ while True:
             if event.key == 32 and not playing: # space
                 # restart game
                 restart()
-        
+            if False and event.key == 32 and playing:
+                ticks += 1
+
     # QOL
     # moves time out
     if moves >= 500 and playing:
@@ -87,4 +90,4 @@ while True:
     
     ticks += 1
     pygame.display.update()
-    clock.tick(60)
+    #clock.tick(60)

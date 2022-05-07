@@ -12,7 +12,7 @@ class Piece:
     def __init__(self, pos, value):
         self.pos = pos
         self.value = value
-        self.side = -1 if value[0] == "w" else 1
+        self.side = 1 if value.islower() else -1
 
 class Pawn(Piece):
 

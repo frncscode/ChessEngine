@@ -3,19 +3,19 @@ import pygame
 pygame.init()
 
 images = {
-        "wp":pygame.image.load("Assets/Pieces/w_pawn.png"),
-        "wr":pygame.image.load("Assets/Pieces/w_rook.png"),
-        "wb":pygame.image.load("Assets/Pieces/w_bishop.png"),
-        "wk":pygame.image.load("Assets/Pieces/w_knight.png"),
-        "wK":pygame.image.load("Assets/Pieces/w_king.png"),
-        "wq":pygame.image.load("Assets/Pieces/w_queen.png"),
+        "P":pygame.image.load("Assets/Pieces/w_pawn.png"),
+        "R":pygame.image.load("Assets/Pieces/w_rook.png"),
+        "B":pygame.image.load("Assets/Pieces/w_bishop.png"),
+        "N":pygame.image.load("Assets/Pieces/w_knight.png"),
+        "K":pygame.image.load("Assets/Pieces/w_king.png"),
+        "Q":pygame.image.load("Assets/Pieces/w_queen.png"),
 
-        "bq":pygame.image.load("Assets/Pieces/b_queen.png"),
-        "bp":pygame.image.load("Assets/Pieces/b_pawn.png"),
-        "br":pygame.image.load("Assets/Pieces/b_rook.png"),
-        "bb":pygame.image.load("Assets/Pieces/b_bishop.png"),
-        "bk":pygame.image.load("Assets/Pieces/b_knight.png"),
-        "bK":pygame.image.load("Assets/Pieces/b_king.png")
+        "q":pygame.image.load("Assets/Pieces/b_queen.png"),
+        "p":pygame.image.load("Assets/Pieces/b_pawn.png"),
+        "r":pygame.image.load("Assets/Pieces/b_rook.png"),
+        "b":pygame.image.load("Assets/Pieces/b_bishop.png"),
+        "n":pygame.image.load("Assets/Pieces/b_knight.png"),
+        "k":pygame.image.load("Assets/Pieces/b_king.png")
         }
 
 class Visualizer:

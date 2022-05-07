@@ -10,29 +10,48 @@ The meat of the chess engine
 The board class runs the whole game of chess
 '''
 class Board:
+    piece_values = {
+        'p': 100,
+        'r': 300,
+        'n': 300,
+        'b': 300,
+        'q': 900,
+        'k': 0 
+            }
+
     side_conversion = {-1: "WHITE", 1: "BLACK"}
 
-    default_board = [
-        ["br","bk","bb","bq","bK","bb","bk","br"],
-        ["bp" for _ in range(8)],
-        ["0" for _ in range(8)],
-        ["0" for _ in range(8)],
-        ["0" for _ in range(8)],
-        ["0" for _ in range(8)],
-        ["wp" for _ in range(8)],
-        ["wr","wk","wb","wq","wK","wb","wk","wr"]
-        ]
-
     # constructor
-    def __init__(self, setup = default_board):
+    def __init__(self, FEN = 'rnbkqbnr/pppppppp/00000000/00000000/00000000/00000000/PPPPPPPP/RNBQKBNR'): # default FEN string
         ''' Args: setup is a 2d array of pieces
         for the board to begin as. Default chess
         setup if no argument is passed'''
-        self.board = self.str_to_classed(setup)
+        self.board = self.createBoard(FEN)
+        print(self.board)
+        self.moves = []
         self.white_check = False
         self.black_check = False
         self.turn = -1 # white
         self.winner = None
+
+    # evaluation function of a certain side
+    def eval(self, side):
+        score = 0
+
+        # evaluating presence of pieces
+        pieces = self.getPieces(side)
+        for piece in pieces:
+            score += Board.piece_values[piece.value.lower()] 
+        
+        # evaluating check positions
+        if side == -1:
+            if self.white_check:
+                score -= 500
+        elif side == 1:
+            if self.black_check:
+                score -= 500
+
+        return score
 
     # function to return all possible moves excluding check rules
     # check rules are checked in the getValidMoves func
@@ -117,13 +136,13 @@ class Board:
             board = self.board
         # getting the king
         for row in board:
-            for piece in row:
-                if piece: # not empty
-                    if piece.side == side and piece.value[1] == 'K':
-                        King = piece
+            for p in row:
+                if p: # not empty
+                    if p.side == side and isinstance(p, piece.King):
+                        King = p
         # checking for check
-        for piece in self.getPieces(side * -1, board):
-            if King.pos in piece.gen_moves(board):
+        for p in self.getPieces(side * -1, board):
+            if King.pos in p.gen_moves(board):
                 return True
         return False
         
@@ -152,6 +171,11 @@ class Board:
     
     # update that runs after each and every move
     def update(self):
+        # evaluating
+        black_score = self.eval(1)
+        white_score = self.eval(-1)
+        print('Eval Results: White:' + str(white_score) + ' Black:' + str(black_score))
+
         self.black_check = self.inCheck(1)
         self.white_check = self.inCheck(-1)
         start = time.perf_counter()
@@ -178,15 +202,15 @@ class Board:
         pieceToMove.pos = pos
         
         # checking for promotion
-        if pieceToMove.value[1] == 'p':
+        if pieceToMove.value.lower() == 'p':
+            pieceToMove.moved = True
             if pieceToMove.moved and pieceToMove.pos[0] == 7 or pieceToMove.pos[0] == 0:
                 # promote the pawn
-                self.board[pieceToMove.pos[0]][pieceToMove.pos[1]] = Queen(pieceToMove.pos, pieceToMove.value[0] + 'q')
+                self.board[pieceToMove.pos[0]][pieceToMove.pos[1]] = Queen(pieceToMove.pos, 'q')
 
-        # updating the moved attribute of piece if its a pawn
-        if pieceToMove.value[1] == 'p': # pawn
-            pieceToMove.moved = True
        
+        self.moves.append((pieceToMove, pos))
+
         # updating
         self.update()
 
@@ -195,6 +219,10 @@ class Board:
 
         # successful
         return True
+
+    def undoMove(self):
+        moveToUndo = self.moves.pop[-1]
+        pass
 
     def copy(self):
         board = []
@@ -205,21 +233,6 @@ class Board:
             board.append(row_)
         return board
 
-    def classed_to_str(self, classed_board):
-        board = []
-        for row in classed_board:
-            row = []
-            for col in row:
-                print(col)
-                if col == 0:
-                    row.append("0")
-                else:
-                    row.append(col.value)
-                    print(col.value)
-            board.append(row)
-        return board
-
-
     def print(self):
         for row in self.board:
             for col in row:
@@ -229,29 +242,25 @@ class Board:
                     print(col.value, end='')
             print("")
 
-    def str_to_classed(self, value):
+    def createBoard(self, FEN):
         board = []
-        for row_idx, _row in enumerate(value):
+        for row_idx, row_ in enumerate(FEN.split("/")):
             row = []
-            for col_idx, col in enumerate(_row):
-                # col is the piece
-                if col == "0":
+            for col_idx, col in enumerate(row_):
+                if col.lower() == "p": # pawn
+                    row.append(piece.Pawn((row_idx, col_idx), col))
+                elif col.lower() == "r": # rook
+                    row.append(piece.Rook((row_idx, col_idx), col))
+                elif col.lower() == "n": # knight 
+                    row.append(piece.Knight((row_idx, col_idx), col))
+                elif col.lower() == "b": # bishop
+                    row.append(piece.Bishop((row_idx, col_idx), col))
+                elif col.lower() == "q": # queen
+                    row.append(piece.Queen((row_idx, col_idx), col))
+                elif col.lower() == "k": # king
+                    row.append(piece.King((row_idx, col_idx), col))
+                elif col == "0":
                     row.append(0)
-                else:
-                    piece_type = col[1]
-                    pos = (row_idx, col_idx)
-                    if piece_type == "p": # pawn
-                        row.append(piece.Pawn(pos, col))
-                    elif piece_type == "r": # rook
-                        row.append(piece.Rook(pos, col))
-                    elif piece_type == "k": # knight
-                        row.append(piece.Knight(pos, col))
-                    elif piece_type == "b": # bishop
-                        row.append(piece.Bishop(pos, col))
-                    elif piece_type == "q": # queen
-                        row.append(piece.Queen(pos, col))
-                    elif piece_type == "K": # king
-                        row.append(piece.King(pos, col))
             board.append(row)
-        return board
 
+        return board
