@@ -2,8 +2,5 @@
 
 ## This is my Chess Engine built in humble python
 
-## Todo
-* Create Board class that can do things
-* Create a visualizer
-* Create pieces and there rules and shii
-* yeah
+## All movement working but no fancy stuff.
+Code got messy so the project will remain unfinished
